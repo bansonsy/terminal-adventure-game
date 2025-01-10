@@ -1,3 +1,7 @@
+import descriptions
+import random
+
+
 class Player:
     def __init__(self):
         self.hp: int = 100
@@ -9,9 +13,15 @@ class Player:
 
 class Room:
     def __init__(self):
-        self.description: str
-        self.sound: str
-        self.smell: str
+        self.description: str = descriptions.descriptions[
+            random.randint(0, len(descriptions.descriptions) - 1)
+        ]
+        self.sound: str = descriptions.sounds[
+            random.randint(0, len(descriptions.sounds) - 1)
+        ]
+        self.smell: str = descriptions.smells[
+            random.randint(0, len(descriptions.smells) - 1)
+        ]
 
     def print_description(self):
         print(self.description)

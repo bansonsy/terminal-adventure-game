@@ -27,15 +27,6 @@ def play_game():
     adventurer = Player()
     current_game = Game(adventurer)
 
-    # Room
-    room = Room()
-    room.description = "This is an empty room."
-    room.sound = "You hear water dripping."
-    room.smell = "There is an musty smell in the air."
-
-    # Current Game
-    current_game.room = room
-
     # Calls the welcome function prompt
     welcome()
 
@@ -46,6 +37,9 @@ def play_game():
 
 def explore_labyrinth(current_game: Game):
     while True:
+        # Room
+        room = Room()
+        current_game.room = room
         current_game.room.print_description()
 
         player_input = input(Fore.YELLOW + "-> ").lower().strip()
@@ -53,10 +47,18 @@ def explore_labyrinth(current_game: Game):
         # Do something with player's input
         if player_input == "help":
             show_help()
+
+        elif player_input in ["n", "s", "e", "w"]:
+            print(f"{Fore.GREEN}You move deeper into the dungeon.")
+            continue
+
+        # Quit the game
         elif player_input == "quit":
             print("Overcome with terror, you flee the dungeon.")
             # TODO: Print out the final score
             play_again()
+
+        # Default case
         else:
             print("I'm not sure what you mean... type 'help' for help.")
 
