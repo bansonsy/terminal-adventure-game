@@ -12,7 +12,7 @@ class Player:
 
 
 class Room:
-    def __init__(self):
+    def __init__(self, items: list, monster: dict):
         self.description: str = descriptions.descriptions[
             random.randint(0, len(descriptions.descriptions) - 1)
         ]
@@ -22,6 +22,8 @@ class Room:
         self.smell: str = descriptions.smells[
             random.randint(0, len(descriptions.smells) - 1)
         ]
+        self.items: list = items
+        self.monster: dict = monster
 
     def print_description(self):
         print(self.description)
