@@ -34,7 +34,7 @@ def play_game():
     welcome()
 
     # Get player input
-    input("Press ENTER to continue...")
+    input(f"{Fore.CYAN}Press ENTER to continue...")
     explore_labyrinth(current_game)
 
 
@@ -69,7 +69,7 @@ def explore_labyrinth(current_game: Game):
         if current_game.room.monster:
             print(f"{Fore.RED}There is a {current_game.room.monster['name']} here!!!")
 
-        player_input = input(Fore.YELLOW + "-> ").lower().strip()
+        player_input = input(f"{Fore.YELLOW}-> ").lower().strip()
 
         # Do something with player's input
         if player_input == "help":
@@ -88,17 +88,45 @@ def explore_labyrinth(current_game: Game):
 
         # Quit the game
         elif player_input == "quit":
-            print("Overcome with terror, you flee the dungeon.")
+            print(f"{Fore.GREEN}Overcome with terror, you flee the dungeon.")
             # TODO: Print out the final score
             play_again()
 
         # Default case
         else:
-            print("I'm not sure what you mean... type 'help' for help.")
+            print(f"{Fore.GREEN}I'm not sure what you mean... type 'help' for help.")
 
 
 def get_an_item(current_game, player_input):
-    pass
+    if len(current_game.room.items) > 0 and player_input[4:] == "":
+        player_input = player_input + " " + current_game.room.items[0]["name"]
+
+    if player_input[4:] not in current_game.player.inventory:
+        # Add to inventory
+        idx = find_in_list(player_input[4:], "name", current_game.room.items)
+
+        if idx > -1:
+            cur_item = current_game.room.items[idx]
+            current_game.player.inventory.append(cur_item["name"])
+            current_game.room.items.pop(idx)
+            print(f"{Fore.CYAN}You picked up the {cur_item['name']}.")
+        else:
+            print(f"{Fore.RED}There is no {player_input[4:]} here!")
+
+    else:
+        print(
+            f"{Fore.YELLOW}You already have a {player_input[4:]}, and decide you don't need another one."
+        )
+
+
+def find_in_list(search_string: str, key: str, list_to_search: list) -> int:
+    idx = -1
+    count = 0
+    for item in list_to_search:
+        if item[key] == search_string:
+            idx = count
+        count = count + 1
+    return idx
 
 
 def play_again():

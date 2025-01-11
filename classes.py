@@ -1,5 +1,6 @@
 import descriptions
 import random
+from colorama import Fore
 
 
 class Player:
@@ -27,7 +28,7 @@ class Room:
         self.monster: dict = monster
 
     def print_description(self):
-        print(self.description)
+        print(f"{Fore.GREEN}{self.description}")
         print(self.smell)
         print(self.sound)
 
