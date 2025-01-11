@@ -9,6 +9,7 @@ class Player:
         self.monsters_defeated: int = 0
         self.xp: int = 0
         self.turns: int = 0
+        self.inventory: list = []
 
 
 class Room:

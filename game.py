@@ -60,9 +60,7 @@ def generate_room() -> Room:
 def explore_labyrinth(current_game: Game):
     while True:
         room = generate_room()
-
         current_game.room = room
-
         current_game.room.print_description()
 
         for i in current_game.room.items:
@@ -77,6 +75,13 @@ def explore_labyrinth(current_game: Game):
         if player_input == "help":
             show_help()
 
+        elif player_input.startswith("get"):
+            if not current_game.room.items:
+                print("There is nothing to pick up")
+                continue
+            else:
+                get_an_item(current_game, player_input)
+
         elif player_input in ["n", "s", "e", "w"]:
             print(f"{Fore.GREEN}You move deeper into the dungeon.")
             continue
@@ -90,6 +95,10 @@ def explore_labyrinth(current_game: Game):
         # Default case
         else:
             print("I'm not sure what you mean... type 'help' for help.")
+
+
+def get_an_item(current_game, player_input):
+    pass
 
 
 def play_again():
