@@ -1,4 +1,5 @@
 import descriptions
+import armory
 import random
 from colorama import Fore
 
@@ -11,6 +12,9 @@ class Player:
         self.xp: int = 0
         self.turns: int = 0
         self.inventory: list = []
+        self.current_weapon: dict = armory.default["hands"]
+        self.current_armor: dict = armory.default["clothes"]
+        self.current_shield: dict = armory.default["no shield"]
 
 
 class Room:

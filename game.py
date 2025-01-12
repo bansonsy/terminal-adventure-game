@@ -29,12 +29,14 @@ def play_game():
 
     adventurer = Player()
     current_game = Game(adventurer)
+    current_game.room = generate_room()
 
     # Calls the welcome function prompt
     welcome()
 
     # Get player input
     input(f"{Fore.CYAN}Press ENTER to continue...")
+    current_game.room.print_description()
     explore_labyrinth(current_game)
 
 
@@ -59,10 +61,6 @@ def generate_room() -> Room:
 
 def explore_labyrinth(current_game: Game):
     while True:
-        room = generate_room()
-        current_game.room = room
-        current_game.room.print_description()
-
         for i in current_game.room.items:
             print(f"{Fore.YELLOW}You see a {i['name']}")
 
@@ -74,6 +72,11 @@ def explore_labyrinth(current_game: Game):
         # Do something with player's input
         if player_input == "help":
             show_help()
+            continue
+
+        elif player_input == "look":
+            current_game.room.print_description()
+            continue
 
         elif player_input.startswith("get"):
             if not current_game.room.items:
@@ -81,10 +84,27 @@ def explore_labyrinth(current_game: Game):
                 continue
             else:
                 get_an_item(current_game, player_input)
+                continue
 
+        elif player_input == "invetory" or player_input == "inv":
+            show_inventory(current_game)
+            continue
+
+        elif player_input.startswith("drop"):
+            drop_an_item(current_game, player_input)
+            continue
+
+        elif player_input.startswith("equip"):
+            use_item(current_game.player, player_input[6:])
+            continue
+
+        elif player_input.startswith("use"):
+            use_item(current_game.player, player_input[4:])
+            continue
+
+        # Moving around the map
         elif player_input in ["n", "s", "e", "w"]:
             print(f"{Fore.GREEN}You move deeper into the dungeon.")
-            continue
 
         # Quit the game
         elif player_input == "quit":
@@ -95,6 +115,59 @@ def explore_labyrinth(current_game: Game):
         # Default case
         else:
             print(f"{Fore.GREEN}I'm not sure what you mean... type 'help' for help.")
+
+        current_game.room = generate_room()
+        current_game.room.print_description()
+
+
+def use_item(player: Player, item: str):
+    if item in player.inventory:
+        old_weapon = player.current_weapon
+
+        if armory.items[item]["type"] == "weapon":
+            player.current_weapon = armory.items[item]
+            print(
+                f"You arm yourself with a {player.current_weapon['name']} instead of your {old_weapon['name']}."
+            )
+
+            if item == "longbow" and player.current_shield["name"] != "no shield":
+                player.current_shield = -armory.default["no shield"]
+                print(
+                    f"{Fore.CYAN}Since you cannot use a shield with a {item}, you sling it over your back."
+                )
+
+        elif armory.items[item]["type"] == "armor":
+            player.current_armor = armory.items[item]
+            print(f"{Fore.CYAN}You put on the {player.current_armor['name']}.")
+
+        elif armory.items[item]["type"] == "shield":
+            # You can't use a shield with a bow
+            if player.current_weapon["name"] == "longbow":
+                print(f"{Fore.RED}You can't use a shield while you are using a bow!!!")
+            else:
+                player.current_shield = armory.items[item]
+                print(f"{Fore.CYAN}You equip your {player.current_shield['name']}.")
+
+        else:
+            print(f"{Fore.RED}You can't use a {item} as armor, weapon, or shield.")
+
+    else:
+        print(f"{Fore.RED}You don't have an {item}.")
+
+
+def drop_an_item(current_game: Game, player_input: str):
+    try:
+        current_game.player.inventory.remove(player_input[5:])
+        print(f"{Fore.CYAN}You drop the {player_input[5:]}.")
+        current_game.room.items.append(armory.items[player_input[5:]])
+    except ValueError:
+        print(f"{Fore.RED}You are not carrying a {player_input[5:]}.")
+
+
+def show_inventory(current_game: Game):
+    print(f"{Fore.CYAN}Your inventory:")
+    for x in current_game.player.inventory:
+        print(f"    - {x.capitalize()}")
 
 
 def get_an_item(current_game, player_input):
